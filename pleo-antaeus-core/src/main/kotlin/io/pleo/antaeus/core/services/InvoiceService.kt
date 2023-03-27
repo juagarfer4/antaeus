@@ -20,4 +20,8 @@ class InvoiceService(private val dal: AntaeusDal) {
     fun fetch(id: Int): Invoice {
         return dal.fetchInvoice(id) ?: throw InvoiceNotFoundException(id)
     }
+
+    fun setInvoiceAsPaid(id: Int): Invoice? {
+        return dal.setInvoiceAsPaid(id) ?: throw InvoiceNotFoundException(id)
+    }
 }

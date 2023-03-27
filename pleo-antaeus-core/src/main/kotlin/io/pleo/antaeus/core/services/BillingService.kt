@@ -1,13 +1,9 @@
 package io.pleo.antaeus.core.services
 
 import io.pleo.antaeus.core.exceptions.CurrencyMismatchException
-import io.pleo.antaeus.core.exceptions.CustomerNotFoundException
 import io.pleo.antaeus.core.exceptions.NetworkException
 import io.pleo.antaeus.core.external.PaymentProvider
-import io.pleo.antaeus.models.Currency
-import io.pleo.antaeus.models.Customer
 import io.pleo.antaeus.models.Invoice
-import io.pleo.antaeus.models.InvoiceStatus
 import mu.KotlinLogging
 
 class BillingService(
@@ -26,7 +22,7 @@ class BillingService(
         logger.info { "Fetching all pending invoices" }
     }
 
-    fun payInvoice(invoice: Invoice, customerId: Int) {
+    fun payInvoice(invoice: Invoice, customerId: Int): Invoice {
         val customer = customerService.fetch(customerId)
         val invoiceId = invoice.id
 
@@ -42,10 +38,14 @@ class BillingService(
             retries++
             try {
                 charged = paymentProvider.charge(invoice)
+                // invoice needs to be registered as paid
+                invoiceService.setInvoiceAsPaid(invoiceId)
                 logger.info { "Invoice '$invoiceId' has been paid" }
             } catch (e: NetworkException) {
                 logger.error { "A network error happened; payment '$invoiceId' could not be completed" }
             }
         }
+
+        return invoice
     }
 }
