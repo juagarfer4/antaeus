@@ -11,6 +11,7 @@ import getPaymentProvider
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
+import io.pleo.antaeus.core.tasks.BillingTask
 import io.pleo.antaeus.data.AntaeusDal
 import io.pleo.antaeus.data.CustomerTable
 import io.pleo.antaeus.data.InvoiceTable
@@ -69,4 +70,8 @@ fun main() {
         customerService = customerService,
         billingService = billingService
     ).run()
+
+    // Start task for monthly charge
+    val billingTask = BillingTask(billingService)
+    billingTask.run()
 }

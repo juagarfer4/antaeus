@@ -11,17 +11,29 @@ class BillingService(
     private val invoiceService: InvoiceService,
     private val customerService: CustomerService
 ) {
-// TODO - Add code e.g. here
 
     private val logger = KotlinLogging.logger {}
     private val maxNumberOfRetries = 3
 
+    /**
+     * Retrieves pending invoices and sets the payment for each of them.
+     *
+     */
     fun payInvoices() {
         // fetch only pending invoices so not to check each invoice's status before trying to charge
         invoiceService.fetchPendingInvoices().forEach { invoice -> payInvoice(invoice, invoice.customerId) }
         logger.info { "Fetching all pending invoices" }
     }
 
+    /**
+     * Handles the payment of a single invoice.
+     *
+     * @param  invoice                      the invoice to be paid
+     * @param  customerId                   the ID of the customer responsible for the invoice
+     * @throws CurrencyMismatchException    if the currency of the invoice and its corresponding customer do not match
+     * @throws NetworkException             when a network error happens
+     * @return                              the charged invoice
+     */
     fun payInvoice(invoice: Invoice, customerId: Int): Invoice {
         val customer = customerService.fetch(customerId)
         val invoiceId = invoice.id

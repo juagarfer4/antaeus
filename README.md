@@ -7,3 +7,9 @@ Of course, this was also my first experience with MockK. Coming from Mockito, I 
 ## Second version
 
 Updated the status of the paid invoices. Also, added some endpoint to be used for charging pending invoices (besides the scheduled charging), which also can help for functional testing purposes.
+
+## Third version
+
+At this point, I added the scheduled task for running the payment of the pending invoices. I have usually worked with the Spring @Scheduled annotation in these type of cases, using a cron expression for the scheduling, so another first time for me here!
+
+I also included some Javadoc for the functions that I added.
